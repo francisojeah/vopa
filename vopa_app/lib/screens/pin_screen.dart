@@ -35,8 +35,8 @@ class _PinScreenState extends State<PinScreen> {
             ElevatedButton(
               onPressed: () {
                 if (_pinController.text == '1234') {
-                  // Proceed if the PIN is correct (hardcoded for now)
-                  Navigator.pop(context);
+                  // On successful PIN authentication, proceed with payment
+                  Navigator.pop(context, true); // Return true for successful authentication
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Incorrect PIN')),
