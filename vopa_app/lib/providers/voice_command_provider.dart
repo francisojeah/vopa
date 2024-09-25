@@ -40,23 +40,47 @@ class VoiceCommandProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void processVoiceCommand(String command) {
-    if (command.toLowerCase().contains('make payment')) {
-      // Extract payment details from voice command and trigger payment
-      double amount = _extractAmount(command);
-      String description = _extractDescription(command);
-      _paymentService.initiatePayment('userId123', amount, description);
-      print('Processing payment...');
-    }
+void processVoiceCommand(String command) {
+  if (command.toLowerCase().contains('make payment')) {
+    // First, prompt for PIN authentication
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => PinScreen(),
+    )).then((authenticated) {
+      if (authenticated == true) {
+        // Continue to payment after successful PIN authentication
+        double amount = _extractAmount(command);
+        String description = _extractDescription(command);
+        _paymentService.initiatePayment('userId123', amount, description).then((success) {
+          if (success) {
+            print('Payment processed successfully');
+          } else {
+            print('Payment failed');
+          }
+        });
+      }
+    });
   }
+}
+
 
   double _extractAmount(String command) {
-    // Use NLP or regex to extract amount from voice command
-    return 100.0; // Dummy amount for now
-  }
+    // Use regular expressions or a voice-to-text NLP service to extract the amount from command
+    RegExp regExp = RegExp(r'(\d+)');
+    var match = regExp.firstMatch(command);
+    if (match != null) {
+        return double.parse(match.group(0)!);
+    }
+    return 0.0;
+    }
 
-  String _extractDescription(String command) {
-    // Extract payment description from the command
-    return 'Payment Description'; // Dummy description
-  }
+    String _extractDescription(String command) {
+    // Extract description like "groceries", "electricity bill", etc.
+        if (command.toLowerCase().contains('groceries')) {
+            return 'Groceries Payment';
+        } else if (command.toLowerCase().contains('bill')) {
+            return 'Bill Payment';
+        }
+        return 'General Payment';
+    }
+
 }
