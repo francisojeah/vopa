@@ -38,7 +38,6 @@ dependencies:
   hive: ^2.2.3      # Local storage for offline-first
   hive_flutter: ^1.1.0
   connectivity_plus: ^2.0.2  # Connectivity checking
-  flutter_sms: ^2.3.1        # SMS integration for payments
   google_ml_kit: ^0.7.0      # Voice and NLP
   encrypt: ^5.0.0            # Security/encryption
   
@@ -46,10 +45,14 @@ dependencies:
   flutter_tts: ^4.0.2
 
   ussd_service: ^0.1.1
-  sms: ^0.2.4
+  flutter_sms: ^2.3.3
+  readsms: ^0.2.0+4
+  android_sms_retriever: ^1.3.3
 
   # flutter_voice_auth: latest_version
 
+  http: ^1.2.2
+  flutter_secure_storage: ^9.2.2 # For securely storing API keys
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
