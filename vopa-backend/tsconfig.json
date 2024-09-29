@@ -10,12 +10,21 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "jsx": "react-jsx",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": ["src/*"],
+      "@modules/*": ["src/modules/*"],
+      "@utils/*": ["src/utils/*"],
+      "@middleware/*": ["src/middleware/*"],
+      "@providers": ["src/providers/*"],
+      "@configurations/*": ["src/configurations/*"]
+    }
   }
 }
