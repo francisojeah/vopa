@@ -7,7 +7,7 @@ class VoiceCommandScreen extends StatefulWidget {
 }
 
 class _VoiceCommandScreenState extends State<VoiceCommandScreen> {
-  stt.SpeechToText _speech;
+  late stt.SpeechToText _speech;
   bool _isListening = false;
   String _text = 'Press the mic and speak';
 

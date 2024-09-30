@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 
 class LocalStorageService {
-  Box _transactionBox;
+  late Box _transactionBox;
 
   Future<void> init() async {
     _transactionBox = await Hive.openBox('transactions');
@@ -19,9 +19,20 @@ class LocalStorageService {
     if (await isOnline()) {
       var transactions = getTransactions();
       for (var transaction in transactions) {
-        // Send transaction data to backend API
-        // Remove from local storage after syncing
+        // Implement server syncing logic
+        await sendToServer(transaction);
+        // After syncing, remove the local transaction
+        await _transactionBox.delete(transaction['id']);
       }
     }
+  }
+
+  Future<void> sendToServer(Map<String, dynamic> transaction) async {
+    // Add API call to send data to the server
+  }
+
+  Future<bool> isOnline() async {
+    // Implement a check to see if the app is online
+    return true;
   }
 }

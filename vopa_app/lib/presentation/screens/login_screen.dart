@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'home_screen.dart';
+import 'package:vopa_app/core/constants/constants.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -20,7 +20,25 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       Navigator.pushNamed(context, AppConstants.homeScreenRoute);
     } catch (e) {
-      print(e);
+      String errorMessage;
+      if (e is FirebaseAuthException) {
+        switch (e.code) {
+          case 'user-not-found':
+            errorMessage = 'No user found with that email.';
+            break;
+          case 'wrong-password':
+            errorMessage = 'Incorrect password.';
+            break;
+          default:
+            errorMessage = 'An unknown error occurred.';
+        }
+      } else {
+        errorMessage = 'An error occurred. Please try again later.';
+      }
+      // Show error message to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
     }
   }
 
@@ -32,8 +50,12 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(controller: emailController, decoration: InputDecoration(hintText: 'Email')),
-            TextField(controller: passwordController, decoration: InputDecoration(hintText: 'Password')),
+            TextField(
+                controller: emailController,
+                decoration: InputDecoration(hintText: 'Email')),
+            TextField(
+                controller: passwordController,
+                decoration: InputDecoration(hintText: 'Password')),
             SizedBox(height: 20),
             ElevatedButton(onPressed: _loginUser, child: Text('Login')),
           ],
