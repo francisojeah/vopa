@@ -3,71 +3,97 @@ import 'dart:convert';
 import 'package:vopa_app/core/constants/constants.dart';
 
 class ApiService {
-  final String apiUrl = 'https://api.yourservice.com';  // Replace with your actual API base URL
+  final String apiUrl = 'https://vopa-backend.onrender.com';  
 
   Future<void> processVoicePayment(String amount) async {
-    final url = Uri.parse('$apiUrl/voice-payment');  // Replace with your actual API endpoint for voice payments
+    final url = Uri.parse('$apiUrl/voice-payment');
 
     try {
       final response = await http.post(
         url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer your_api_token',  // Add your authorization header if needed
-        },
+        headers: _getHeaders(),
         body: jsonEncode({'amount': amount}),
       );
 
-      if (response.statusCode == 200) {
-        // Handle success
-        print('Voice payment successful: ${response.body}');
-      } else {
-        // Handle server errors
-        print('Voice payment failed: ${response.body}');
-      }
+      _handleResponse(response, 'Voice payment');
     } catch (e) {
-      // Handle any other errors such as network errors
       print('Error processing voice payment: $e');
     }
   }
 
-  Future<void> processManualPayment(String amount) async {
-    final url = Uri.parse('$apiUrl/manual-payment');  // Replace with your actual API endpoint for manual payments
+  Future<void> processKoraPayment(String amount, String currency, String paymentMethod) async {
+    final url = Uri.parse('https://api.kora.com/v1/payments');
+
+    final payload = {
+      'amount': amount,
+      'currency': currency,
+      'paymentMethod': paymentMethod,
+    };
 
     try {
       final response = await http.post(
         url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer your_api_token',  // Add your authorization header if needed
-        },
+        headers: _getKoraHeaders(),
+        body: jsonEncode(payload),
+      );
+
+      _handleResponse(response, 'Kora payment');
+    } catch (e) {
+      print('Error processing Kora payment: $e');
+    }
+  }
+
+  Future<void> createTransaction(Map<String, dynamic> transactionData) async {
+    final url = Uri.parse('${AppConstants.apiBaseUrl}/transaction/create');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: _getHeaders(),
+        body: jsonEncode(transactionData),
+      );
+
+      _handleResponse(response, 'Transaction creation');
+    } catch (e) {
+      print('Error creating transaction: $e');
+    }
+  }
+
+  Future<void> processManualPayment(String amount) async {
+    final url = Uri.parse('$apiUrl/manual-payment');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: _getHeaders(),
         body: jsonEncode({'amount': amount}),
       );
 
-      if (response.statusCode == 200) {
-        // Handle success
-        print('Manual payment successful: ${response.body}');
-      } else {
-        // Handle server errors
-        print('Manual payment failed: ${response.body}');
-      }
+      _handleResponse(response, 'Manual payment');
     } catch (e) {
-      // Handle any other errors such as network errors
       print('Error processing manual payment: $e');
     }
   }
-  
-  Future<void> createTransaction(Map<String, dynamic> transactionData) async {
-    final response = await http.post(
-      Uri.parse(AppConstants.apiBaseUrl + '/transaction/create'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(transactionData),
-    );
 
+  Map<String, String> _getHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      // Add your authorization header if needed
+    };
+  }
+
+  Map<String, String> _getKoraHeaders() {
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer your_kora_api_token', // Replace with your Kora API token
+    };
+  }
+
+  void _handleResponse(http.Response response, String operation) {
     if (response.statusCode == 200) {
-      print('Transaction successful');
+      print('$operation successful: ${response.body}');
     } else {
-      print('Error creating transaction: ${response.body}');
+      print('$operation failed: ${response.body}');
     }
   }
 }

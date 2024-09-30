@@ -17,23 +17,15 @@ class KoraService {
     try {
       String? apiKey = await getApiKey();
       final response = await http.post(
-        Uri.parse('https://api.kora.com/payins'),
-        headers: {
-          'Authorization': 'Bearer $apiKey',
-          'Content-Type': 'application/json',
-        },
+        Uri.parse('https://api.kora.com/v1/payins'), // Adjusted endpoint versioning
+        headers: _getHeaders(apiKey),
         body: jsonEncode({
           'amount': amount,
           'currency': currency,
         }),
       );
 
-      if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
-        print('Pay-In Successful: $responseBody');
-      } else {
-        print('Error: ${response.body}');
-      }
+      _handleResponse(response, 'Pay-In');
     } catch (e) {
       print('Exception: $e');
     }
@@ -43,23 +35,15 @@ class KoraService {
     try {
       String? apiKey = await getApiKey();
       final response = await http.post(
-        Uri.parse('https://api.kora.com/payouts'),
-        headers: {
-          'Authorization': 'Bearer $apiKey',
-          'Content-Type': 'application/json',
-        },
+        Uri.parse('https://api.kora.com/v1/payouts'), // Adjusted endpoint versioning
+        headers: _getHeaders(apiKey),
         body: jsonEncode({
           'amount': amount,
           'recipient': recipient,
         }),
       );
 
-      if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
-        print('Payout Successful: $responseBody');
-      } else {
-        print('Error: ${response.body}');
-      }
+      _handleResponse(response, 'Payout');
     } catch (e) {
       print('Exception: $e');
     }
@@ -69,22 +53,30 @@ class KoraService {
     try {
       String? apiKey = await getApiKey();
       final response = await http.post(
-        Uri.parse('https://api.kora.com/identity/kyc'),
-        headers: {
-          'Authorization': 'Bearer $apiKey',
-          'Content-Type': 'application/json',
-        },
+        Uri.parse('https://api.kora.com/v1/identity/kyc'), // Adjusted endpoint versioning
+        headers: _getHeaders(apiKey),
         body: jsonEncode({'user_id': userId}),
       );
 
-      if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
-        print('KYC Verification Successful: $responseBody');
-      } else {
-        print('Error: ${response.body}');
-      }
+      _handleResponse(response, 'KYC Verification');
     } catch (e) {
       print('Exception: $e');
+    }
+  }
+
+  Map<String, String> _getHeaders(String? apiKey) {
+    return {
+      'Authorization': 'Bearer $apiKey',
+      'Content-Type': 'application/json',
+    };
+  }
+
+  void _handleResponse(http.Response response, String operation) {
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      print('$operation Successful: $responseBody');
+    } else {
+      print('$operation failed: ${response.statusCode} - ${response.body}');
     }
   }
 }
