@@ -11,7 +11,6 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { lastValueFrom } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
-import { KoraWebhookDto } from './dto/kora-webhook.dto';
 
 @Injectable()
 export class PaymentService {
@@ -20,8 +19,8 @@ export class PaymentService {
 
   constructor(
     @InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>,
-    private readonly httpService: HttpService,
     private configService: ConfigService,
+    private httpService: HttpService,
   ) {
     this.koraApiUrl = this.configService.get<string>('KORA_API_URL');
     this.apiKey = this.configService.get<string>('KORA_API_KEY');
@@ -39,7 +38,7 @@ export class PaymentService {
     const savedPayment = await newPayment.save();
 
     // Call Kora's API to initiate payment
-    const apiUrl = 'https://api.kora.com/v1/payments';
+    const apiUrl = `${this.koraApiUrl}/v1/payments`;
     const payload = {
       amount: createPaymentDto.amount,
       currency: createPaymentDto.currency,
@@ -49,10 +48,19 @@ export class PaymentService {
 
     try {
       const response = await lastValueFrom(
-        this.httpService.post(apiUrl, payload),
+        this.httpService.post(apiUrl, payload, {
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        }),
       );
-      return response?.data;
+      // Update the payment status based on Kora's response
+      savedPayment.status = 'completed';
+      await savedPayment.save();
+      return response.data;
     } catch (error) {
+      console.error('Error initiating payment:', error.response?.data || error);
       throw new InternalServerErrorException('Error initiating payment');
     }
   }
@@ -69,8 +77,8 @@ export class PaymentService {
       );
     }
 
-    payment.status = status; 
-    return payment.save(); 
+    payment.status = status;
+    return payment.save();
   }
 
   // Find payment by transaction ID
@@ -87,5 +95,25 @@ export class PaymentService {
   // List all payments by user
   async getUserPayments(userId: string): Promise<Payment[]> {
     return this.paymentModel.find({ userId });
+  }
+
+  // Get payment status from Kora's API
+  async getPaymentStatus(transactionId: string): Promise<any> {
+    const apiUrl = `${this.koraApiUrl}/v1/payments/${transactionId}`;
+
+    try {
+      const response = await lastValueFrom(
+        this.httpService.get(apiUrl, {
+          headers: {
+            'Authorization': `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        }),
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching payment status:', error.response?.data || error);
+      throw new InternalServerErrorException('Error fetching payment status');
+    }
   }
 }

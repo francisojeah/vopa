@@ -12,7 +12,6 @@ import {
   UserEmailVerification,
   UserEmailVerificationSchema,
 } from './schemas/userEmailVerification.schema';
-import { GoogleStrategy } from '@/middleware/authorization/google.strategy';
 
 @Module({
   imports: [
