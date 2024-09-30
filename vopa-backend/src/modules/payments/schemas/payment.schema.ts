@@ -5,7 +5,6 @@ import { PaymentProps } from '../interfaces/payment.interfaces';
 
 export type PaymentDocument = HydratedDocument<PaymentProps>;
 
-
 @Schema({ timestamps: true })
 export class Payment {
   @Prop({ required: true })
@@ -15,7 +14,19 @@ export class Payment {
   amount: number;
 
   @Prop({ required: true })
-  method: string;
+  currency: string;
+
+  @Prop({ required: true })
+  paymentMethod: string;
+
+  @Prop({ required: true })
+  status: string;
+
+  @Prop({ required: true })
+  transactionId: string;
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);

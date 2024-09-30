@@ -1,15 +1,19 @@
 import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
 
 export class CreatePaymentDto {
-  @IsString()
   @IsNotEmpty()
-  email: string; // Reference to User
+  @IsString()
+  readonly userId: string;
 
+  @IsNotEmpty()
   @IsNumber()
-  @IsNotEmpty()
-  amount: number;
+  readonly amount: number;
 
-  @IsString()
   @IsNotEmpty()
-  method: string; // e.g., "card", "bank_transfer", etc.
+  @IsString()
+  readonly currency: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly paymentMethod: string;
 }
