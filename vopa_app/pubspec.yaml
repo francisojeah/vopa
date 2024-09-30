@@ -42,7 +42,6 @@ dependencies:
   flutter_tts: ^4.0.2
 
   ussd_service: ^0.1.1
-  readsms: ^0.2.0+4
 
   # flutter_voice_auth: latest_version
 
