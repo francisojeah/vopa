@@ -37,6 +37,7 @@ export class PaymentController {
   // Handle Kora webhook
   @Post('webhook')
   async handleKoraWebhook(@Body() koraWebhookDto: KoraWebhookDto) {
-    return this.paymentService.updatePaymentStatus(koraWebhookDto);
+    const { transactionId, status } = koraWebhookDto;
+    return await this.paymentService.updatePaymentStatus(transactionId, status);
   }
 }

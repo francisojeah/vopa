@@ -57,19 +57,20 @@ export class PaymentService {
     }
   }
 
-  // Update payment status (e.g., after callback from payment provider)
-  async updatePaymentStatus(koraWebhookDto: KoraWebhookDto): Promise<Payment> {
-    const { transactionId, status } = koraWebhookDto;
-
+  async updatePaymentStatus(
+    transactionId: string,
+    status: string,
+  ): Promise<Payment> {
     const payment = await this.paymentModel.findOne({ transactionId });
+
     if (!payment) {
       throw new NotFoundException(
         `Payment with transaction ID ${transactionId} not found`,
       );
     }
 
-    payment.status = status; // Update status based on webhook
-    return payment.save();
+    payment.status = status; 
+    return payment.save(); 
   }
 
   // Find payment by transaction ID
