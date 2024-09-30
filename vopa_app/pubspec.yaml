@@ -37,9 +37,6 @@ dependencies:
   provider: ^6.0.0  # State management
   hive: ^2.2.3      # Local storage for offline-first
   hive_flutter: ^1.1.0
-  connectivity_plus: ^2.0.2  # Connectivity checking
-  google_ml_kit: ^0.7.0      # Voice and NLP
-  encrypt: ^5.0.0            # Security/encryption
   
   speech_to_text: ^7.0.0     # Voice recognition
   flutter_tts: ^4.0.2
@@ -47,7 +44,6 @@ dependencies:
   ussd_service: ^0.1.1
   flutter_sms: ^2.3.3
   readsms: ^0.2.0+4
-  android_sms_retriever: ^1.3.3
 
   # flutter_voice_auth: latest_version
 
